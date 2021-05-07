@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { makeStyles} from '@material-ui/core/styles';
+import { makeStyles, withStyles} from '@material-ui/core/styles';
 import { Redirect, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 
@@ -40,6 +40,12 @@ const useStyles = makeStyles({
 
 });
 
+const SwitchButton = withStyles({
+  label: {
+    color: '#3A8DFF'
+  },
+})(Button);
+
 
 const Login = (props) => {
   const history = useHistory();
@@ -75,9 +81,9 @@ const Login = (props) => {
           </Grid>
           <Grid item>
             <Box boxShadow={3}>
-              <Button onClick={() => history.push("/login")} className={classes.button} label>
+              <SwitchButton onClick={() => history.push("/login")} className={classes.button} label>
                 Login
-              </Button>
+              </SwitchButton>
             </Box>
           </Grid>
         </Grid>
