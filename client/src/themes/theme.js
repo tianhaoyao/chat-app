@@ -7,7 +7,8 @@ export const theme = createMuiTheme({
     button: {
       textTransform: "none",
       letterSpacing: 0,
-      fontWeight: "bold"
+      fontWeight: "bold",
+      fontSize: 20
     }
   },
   overrides: {
@@ -15,7 +16,7 @@ export const theme = createMuiTheme({
       input: {
         fontWeight: "bold"
       }
-    }
+    },
   },
   palette: {
     primary: { main: "#3A8DFF" },
