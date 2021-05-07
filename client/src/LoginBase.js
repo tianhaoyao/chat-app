@@ -31,6 +31,31 @@ const useStyles = makeStyles({
 
 });
 
+const formStyle = {
+  switch: {
+    position: "absolute",
+    top: '30px',
+    right: '30px',
+  },
+  forms: {
+    background: 'white',
+    border: 0,
+    borderRadius: 3,
+    color: 'white',
+    height: '100vh',
+    padding: '0 30px',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    maxWidth: '200px',
+    maxHeight: '70px',
+    minWidth: '200px',
+    minHeight: '70px',
+  },
+
+}
+
 
 const LoginBase = (props) => {
   const classes = useStyles();
@@ -54,7 +79,7 @@ const LoginBase = (props) => {
 
 
       <Grid item xs={8}>
-        {props.login ? <LoginForm/> : <SignupForm/>}
+        {props.login ? <LoginForm styling={formStyle}/> : <SignupForm styling={formStyle}/>}
         
         
       </Grid>

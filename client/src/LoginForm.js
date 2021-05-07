@@ -12,31 +12,6 @@ import {
 } from "@material-ui/core";
 import { login } from "./store/utils/thunkCreators";
 
-const useStyles = makeStyles({
-  switch: {
-    position: "absolute",
-    top: '30px',
-    right: '30px',
-  },
-  forms: {
-    background: 'white',
-    border: 0,
-    borderRadius: 3,
-    color: 'white',
-    height: '100vh',
-    padding: '0 30px',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    maxWidth: '200px',
-    maxHeight: '70px',
-    minWidth: '200px',
-    minHeight: '70px',
-  },
-
-});
-
 const SwitchButton = withStyles({
   label: {
     color: '#3A8DFF'
@@ -45,6 +20,7 @@ const SwitchButton = withStyles({
 
 
 const LoginForm = (props) => {
+  const useStyles = makeStyles(props.styling);
   const classes = useStyles();
   const history = useHistory();
   const { user, login } = props;
