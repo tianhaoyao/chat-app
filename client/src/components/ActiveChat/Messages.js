@@ -1,14 +1,24 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 import { SenderBubble, OtherUserBubble } from "../ActiveChat";
+import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
+
+const useStyles = makeStyles({
+  chatDisplay: {
+    overflowY:'scroll',
+    maxHeight:'70vh',
+  }
+});
 
 const Messages = (props) => {
   const { messages, otherUser, userId } = props;
+  const classes = useStyles();
+  
 
   return (
-    <Box>
-      {messages.map((message) => {
+    <Box className={classes.chatDisplay}>
+      {messages.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0)).map((message) => {
         const time = moment(message.createdAt).format("h:mm");
 
         return message.senderId === userId ? (
