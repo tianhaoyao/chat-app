@@ -18,7 +18,7 @@ const Messages = (props) => {
 
   return (
     <Box className={classes.chatDisplay}>
-      {messages.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0)).map((message) => {
+      {messages.map((message) => {
         const time = moment(message.createdAt).format("h:mm");
 
         return message.senderId === userId ? (
