@@ -29,7 +29,7 @@ const Sidebar = (props) => {
       <CurrentUser />
       <Typography className={classes.title}>Chats</Typography>
       <Search handleChange={handleChange} />
-      {conversations
+      {conversations.slice(0).reverse()
         .filter((conversation) => conversation.otherUser.username.includes(searchTerm))
         .map((conversation) => {
           return <Chat conversation={conversation} key={conversation.otherUser.username} />;
