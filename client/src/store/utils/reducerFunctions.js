@@ -6,22 +6,54 @@ export const addMessageToStore = (state, payload) => {
       id: message.conversationId,
       otherUser: sender,
       messages: [message],
+      unread: 0,
     };
     newConvo.latestMessageText = message.text;
     return [newConvo, ...state];
   }
 
-  return state.map((convo) => {
-    if (convo.id === message.conversationId) {
-      const convoCopy = { ...convo };
-      convoCopy.messages.push(message);
-      convoCopy.latestMessageText = message.text;
+  let conversationKey = -1;
 
-      return convoCopy;
-    } else {
-      return convo;
+  let newState = [...state];
+  for (let j = 0; j < newState.length; j++) {
+    if (newState[j].id === message.conversationId) {
+      conversationKey = j;
+      break;
     }
-  });
+  }
+
+  let newConvo = Object.assign({}, newState[conversationKey]);
+  let newMessages = [...newConvo.messages];
+  newMessages.push(message);
+  newConvo.messages = newMessages;
+  newConvo.latestMessageText = message.text;
+  newState[conversationKey] = newConvo;
+  return newState;
+};
+
+export const setReadToStore = (state, payload) => {
+  const { msgId, read } = payload;
+  let conversationKey = -1;
+  let msgKey = -1;
+
+  let newState = [...state];
+  for (let j = 0; j < newState.length; j++) {
+    for (let i = 0; i < newState[j].messages.length; i++) {
+      if (state[j].messages[i].id === msgId) {
+        conversationKey = j;
+        msgKey = i;
+        break;
+      }
+    }
+  }
+  let newConvo = Object.assign({}, newState[conversationKey]);
+  let newMessages = [...newConvo.messages];
+  let newMessage = Object.assign({}, newConvo.messages[msgKey]);
+  newMessage.read = read;
+  newMessages[msgKey] = newMessage;
+  newConvo.messages = newMessages;
+  newState[conversationKey] = newConvo;
+  return newState;
 };
 
 export const addOnlineUserToStore = (state, id) => {
@@ -72,6 +104,7 @@ export const addNewConvoToStore = (state, recipientId, message) => {
   return state.map((convo) => {
     if (convo.otherUser.id === recipientId) {
       const newConvo = { ...convo };
+      newConvo.unread = 0;
       newConvo.id = message.conversationId;
       newConvo.messages.push(message);
       newConvo.latestMessageText = message.text;

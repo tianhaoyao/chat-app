@@ -62,6 +62,9 @@ export const logout = (id) => async (dispatch) => {
 export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
+    for(let i = 0; i < data.length; i++) {
+      data[i].unread = 0;
+    }
     dispatch(gotConversations(data));
   } catch (error) {
     console.error(error);
@@ -78,10 +81,22 @@ const sendMessage = (data, body) => {
     message: data.message,
     recipientId: body.recipientId,
     sender: data.sender,
+    read: data.read
   });
 };
 
-// message format to send: {recipientId, text, conversationId}
+//data.message.id, body.sender, true
+const sendRead = (msgId, senderId, recipientId, read) => {
+  let data = {
+    msgId: msgId,
+    senderId: senderId,
+    recipientId: recipientId,
+    read: read
+  }
+  socket.emit("set-read", data);
+}
+
+// message format to send: {recipientId, text, conversationId, exists, read}
 // conversationId will be set to null if its a brand new conversation
 export const postMessage = (body) => async (dispatch) => {
   try {
@@ -91,8 +106,16 @@ export const postMessage = (body) => async (dispatch) => {
     } else {
       dispatch(setNewMessage(data.message, body.sender, body.exists));
     }
-
     sendMessage(data, body);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const setReadMessage = (body) => async (dispatch) => {
+  try {
+    const data = (await axios.post("/api/read", body)).data;
+    sendRead(data.msgId, data.senderId, data.recipientId, data.read);
   } catch (error) {
     console.error(error);
   }
