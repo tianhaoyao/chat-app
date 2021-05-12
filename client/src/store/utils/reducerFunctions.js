@@ -13,11 +13,13 @@ export const addMessageToStore = (state, payload) => {
   }
 
   let conversationKey = -1;
+  let otherUserId = -1;
 
   let newState = [...state];
   for (let j = 0; j < newState.length; j++) {
     if (newState[j].id === message.conversationId) {
       conversationKey = j;
+      otherUserId = newState[j].otherUser.id;
       break;
     }
   }
@@ -27,12 +29,28 @@ export const addMessageToStore = (state, payload) => {
   newMessages.push(message);
   newConvo.messages = newMessages;
   newConvo.latestMessageText = message.text;
+
+  let myUnreadCount = 0;
+  let theirReadIndex = 0;
+
+  for (let i = 0; i < newMessages.length; i++) {
+    if (newMessages[i].senderId === otherUserId && !newMessages[i].read) {
+      myUnreadCount++;
+    } else if (newMessages[i].senderId !== otherUserId && newMessages[i].read) {
+      theirReadIndex = i;
+    }
+  }
+
+  newConvo.myUnreadCount = myUnreadCount;
+  newConvo.theirReadIndex = theirReadIndex;
+
   newState[conversationKey] = newConvo;
   return newState;
 };
 
 export const setReadToStore = (state, payload) => {
   const { msgId, read } = payload;
+  let otherUserId = -1;
   let conversationKey = -1;
   let msgKey = -1;
 
@@ -42,17 +60,34 @@ export const setReadToStore = (state, payload) => {
       if (state[j].messages[i].id === msgId) {
         conversationKey = j;
         msgKey = i;
+        otherUserId = state[j].otherUser.id;
         break;
       }
     }
   }
+
   let newConvo = Object.assign({}, newState[conversationKey]);
   let newMessages = [...newConvo.messages];
   let newMessage = Object.assign({}, newConvo.messages[msgKey]);
   newMessage.read = read;
   newMessages[msgKey] = newMessage;
   newConvo.messages = newMessages;
+
+  let myUnreadCount = 0;
+  let theirReadIndex = 0;
+
+  for (let i = 0; i < newMessages.length; i++) {
+    if (newMessages[i].senderId === otherUserId && !newMessages[i].read) {
+      myUnreadCount++;
+    } else if (newMessages[i].senderId !== otherUserId && newMessages[i].read) {
+      theirReadIndex = i;
+    }
+  }
+
+  newConvo.myUnreadCount = myUnreadCount;
+  newConvo.theirReadIndex = theirReadIndex;
   newState[conversationKey] = newConvo;
+
   return newState;
 };
 

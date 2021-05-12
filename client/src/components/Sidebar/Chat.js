@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Box } from "@material-ui/core";
+import { Box, Badge } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { withStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
@@ -27,6 +27,7 @@ class Chat extends Component {
   render() {
     const { classes } = this.props;
     const otherUser = this.props.conversation.otherUser;
+    const myUnreadCount = this.props.conversation.myUnreadCount;
     return (
       <Box
         onClick={() => this.handleClick(this.props.conversation)}
@@ -38,7 +39,9 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} />
+        <Badge badgeContent={myUnreadCount} color="secondary">
+          <ChatContent conversation={this.props.conversation} />
+        </Badge>
       </Box>
     );
   }
