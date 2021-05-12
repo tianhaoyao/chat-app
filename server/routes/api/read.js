@@ -10,34 +10,17 @@ router.post("/", async (req, res, next) => {
     if (!req.user) {
       return res.sendStatus(401);
     }
-    const senderVerify = req.user.id;
-    const { msgId, senderId, recipientId, read } = req.body;
-    const token = req.cookies["JWT"];
-    if (token) {
-      jwt.verify(token, process.env.SESSION_SECRET, (err, decoded) => {
-        if (err) {
-          return next();
-        }
-        User.findOne({
-          where: { id: decoded.id },
-        }).then(async (user) => {
-          if (user.dataValues.id !== senderVerify) {
-            res.sendStatus(403);
-          } else {
-            Message.findOne({
-              where: {id: msgId}
-            }).then(async (message) => {
-              //save to database
-              message.read = read;
-              await message.save();
-              res.json({ msgId, senderId, recipientId, read });
-            })
-          }
-        });
-      });
-    } else {
-      res.sendStatus(403);
-    }
+    const { msgId, senderId, recipientId, read, conversationId } = req.body;
+
+    Message.findOne({
+      where: { id: msgId },
+    }).then(async (message) => {
+      //save to database
+      message.update({
+        read: read
+      })
+      .then(res.json({ msgId, senderId, recipientId, read, conversationId }));
+    });
   } catch (error) {
     next(error);
   }

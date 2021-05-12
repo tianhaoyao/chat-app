@@ -57,12 +57,12 @@ io.on("connection", (socket) => {
   socket.on("set-read", (data) => {
     const senderId = data.senderId;
     const recipientId = data.recipientId; 
-
     io.emit("set-reading", {
       msgId: data.msgId,
       recipientId: recipientId,
       senderId: senderId,
-      read: data.read
+      read: data.read,
+      conversationId: data.conversationId
     });
   });
 

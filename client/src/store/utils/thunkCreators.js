@@ -83,12 +83,13 @@ const sendMessage = (data, body) => {
 };
 
 //data.message.id, body.sender, true
-const sendRead = (msgId, senderId, recipientId, read) => {
+const sendRead = (msgId, senderId, recipientId, read, conversationId) => {
   let data = {
     msgId: msgId,
     senderId: senderId,
     recipientId: recipientId,
-    read: read
+    read: read,
+    conversationId: conversationId
   }
   socket.emit("set-read", data);
 }
@@ -112,7 +113,7 @@ export const postMessage = (body) => async (dispatch) => {
 export const setReadMessage = (body) => async (dispatch) => {
   try {
     const data = (await axios.post("/api/read", body)).data;
-    sendRead(data.msgId, data.senderId, data.recipientId, data.read);
+    sendRead(data.msgId, data.senderId, data.recipientId, data.read, data.conversationId);
   } catch (error) {
     console.error(error);
   }

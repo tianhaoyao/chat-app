@@ -22,7 +22,7 @@ router.get("/", async (req, res, next) => {
       attributes: ["id"],
       order: [[Message, "createdAt", "ASC"]],
       include: [
-        { model: Message, order: ["createdAt", "ASC"] },
+        { model: Message, order: ["createdAt", "DESC"] },
         {
           model: User,
           as: "user1",
@@ -60,21 +60,28 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser = convoJSON.user2;
         delete convoJSON.user2;
       }
-
       let myUnreadCount = 0;
       let theirReadIndex = 0;
+      let foundMyEnd = false;
+      let foundTheirEnd = true;
 
-      for (let i = 0; i < convoJSON.messages.length; i++) {
-        if (
-          convoJSON.messages[i].senderId === convoJSON.otherUser.id &&
-          !convoJSON.messages[i].read
-        ) {
-          myUnreadCount++;
-        } else if (
-          convoJSON.messages[i].senderId !== convoJSON.otherUser.id &&
-          convoJSON.messages[i].read
-        ) {
-          theirUneadIndex = i;
+      for (let i = convoJSON.messages.length - 1; i >= 0; i--) {
+        if (convoJSON.messages[i].senderId === convoJSON.otherUser.id) {
+          if (!convoJSON.messages[i].read) {
+            myUnreadCount++;
+          } else {
+            foundMyEnd = true;
+          }
+        } else if (convoJSON.messages[i].senderId !== convoJSON.otherUser.id) {
+          if (convoJSON.messages[i].read) {
+            theirReadIndex = i;
+          } else {
+            foundTheirEnd = true;
+          }
+        }
+
+        if (foundMyEnd && foundTheirEnd) {
+          break;
         }
       }
       convoJSON.myUnreadCount = myUnreadCount;

@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
 
 const OtherUserBubble = (props) => {
   const classes = useStyles();
-  const { text, time, otherUser, id, recipientId } = props;
+  const { text, time, otherUser, id, recipientId, conversationId } = props;
   const dispatch = useDispatch();
 
   async function handleSubmit(msgId) {
@@ -44,6 +44,7 @@ const OtherUserBubble = (props) => {
       senderId: otherUser.id,
       recipientId: recipientId,
       read: true,
+      conversationId: conversationId,
     };
     dispatch(setReadMessage(body));
   }
@@ -56,17 +57,13 @@ const OtherUserBubble = (props) => {
         className={classes.avatar}
       ></Avatar>
       <Box>
-        {props.read ? (
-          <Typography className={classes.usernameDate}>
-            {otherUser.username} {time} read
-          </Typography>
-        ) : (
-          <Typography className={classes.usernameDate}>
-            {otherUser.username} {time} unread
-          </Typography>
-        )}
+        <Typography className={classes.usernameDate}>
+          {otherUser.username} {time} {props.read ? "read" : "unread"}
+        </Typography>
         <Box className={classes.bubble}>
-          <Typography className={classes.text} onClick={() => handleSubmit(id)}>{text}</Typography>
+          <Typography className={classes.text} onClick={() => handleSubmit(id)}>
+            {text}
+          </Typography>
         </Box>
       </Box>
     </Box>

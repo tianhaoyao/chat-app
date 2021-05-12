@@ -49,20 +49,24 @@ export const addMessageToStore = (state, payload) => {
 };
 
 export const setReadToStore = (state, payload) => {
-  const { msgId, read } = payload;
+  const { msgId, read, conversationId } = payload;
   let otherUserId = -1;
   let conversationKey = -1;
   let msgKey = -1;
-
+  
   let newState = [...state];
   for (let j = 0; j < newState.length; j++) {
-    for (let i = 0; i < newState[j].messages.length; i++) {
-      if (state[j].messages[i].id === msgId) {
-        conversationKey = j;
-        msgKey = i;
-        otherUserId = state[j].otherUser.id;
-        break;
-      }
+    if(newState[j].id === conversationId) {
+      conversationKey = j;
+      break;
+    }
+  }
+
+  for (let i = 0; i < newState[conversationKey].messages.length; i++) {
+    if (newState[conversationKey].messages[i].id === msgId) {
+      msgKey = i;
+      otherUserId = state[conversationKey].otherUser.id;
+      break;
     }
   }
 

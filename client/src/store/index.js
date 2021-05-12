@@ -32,34 +32,34 @@ const store = createStore(rootReducer, /* preloadedState, */ composeEnhancers(
       applyMiddleware(thunkMiddleware, loggerMiddleware)
     ));
 
-export const updateUnreadCount = (state, msgId) => {
-  let conversationKey = -1
-  for(let j = 0; j < state.length; j++) {
-    for(let i = 0; i < state[j].messages.length; i++){
-      if(state[j].messages[i].id === msgId){
-        conversationKey = j
-        break;
+// export const updateUnreadCount = (state, msgId) => {
+//   let conversationKey = -1
+//   for(let j = 0; j < state.length; j++) {
+//     for(let i = 0; i < state[j].messages.length; i++){
+//       if(state[j].messages[i].id === msgId){
+//         conversationKey = j
+//         break;
         
-      }
-    }
-  }
-  let myId = state.user.id;
+//       }
+//     }
+//   }
+//   let myId = state.user.id;
 
-  return state.conversations.map((convo) => {
-    if(convo.id === conversationKey) {
-      let unread = 0
-      for(let i = 0; i < convo.messages.length; i++) {
-        if(convo.messages[i].read === false && convo.messages[i].senderId !== myId) {
-          unread += 1
-        }
-      }
-      let newConvo = { ...convo };
-      newConvo.unread = unread;
-      return newConvo
-    } else {
-      return convo;
-    }
-  });
-};
+//   return state.conversations.map((convo) => {
+//     if(convo.id === conversationKey) {
+//       let unread = 0
+//       for(let i = 0; i < convo.messages.length; i++) {
+//         if(convo.messages[i].read === false && convo.messages[i].senderId !== myId) {
+//           unread += 1
+//         }
+//       }
+//       let newConvo = { ...convo };
+//       newConvo.unread = unread;
+//       return newConvo
+//     } else {
+//       return convo;
+//     }
+//   });
+// };
 
 export default store

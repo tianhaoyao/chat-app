@@ -26,7 +26,13 @@ socket.on("connect", () => {
   });
   socket.on("set-reading", (data) => {
     store.dispatch(
-      setRead(data.msgId, data.senderId, data.recipientId, data.read)
+      setRead(
+        data.msgId,
+        data.senderId,
+        data.recipientId,
+        data.read,
+        data.conversationId
+      )
     );
   });
 });

@@ -39,7 +39,7 @@ export const setNewMessage = (message, sender, exists, read) => {
   };
 };
 
-export const setRead = (msgId, senderId, recipientId, read) => {
+export const setRead = (msgId, senderId, recipientId, read, conversationId) => {
   return {
     type: SET_READ,
     payload: {
@@ -47,6 +47,7 @@ export const setRead = (msgId, senderId, recipientId, read) => {
       senderId: senderId || null,
       recipientId: recipientId,
       read: read,
+      conversationId: conversationId
     },
   };
 };
