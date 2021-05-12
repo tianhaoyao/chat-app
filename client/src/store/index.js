@@ -6,7 +6,6 @@ import user from "./user";
 import conversations from "./conversations";
 import activeConversation from "./activeConversation";
 
-const CALCULATE_UNREAD = "CALCULATE_UNREAD"
 const CLEAR_ON_LOGOUT = "CLEAR_ON_LOGOUT";
 
 export const clearOnLogout = () => {
@@ -24,9 +23,6 @@ const rootReducer = (state, action) => {
   if (action.type === CLEAR_ON_LOGOUT) {
     // set state to initial state
     state = undefined;
-  }
-  else if(action.type === CALCULATE_UNREAD) {
-    return updateUnreadCount(state, action.payload.msgId);
   }
   return appReducer(state, action);
 };
@@ -65,13 +61,5 @@ export const updateUnreadCount = (state, msgId) => {
     }
   });
 };
-
-export const calculateUnread = (msgId) => {
-  return {
-    type: CALCULATE_UNREAD,
-    payload: { msgId },
-  };
-}
-
 
 export default store
