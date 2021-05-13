@@ -20,9 +20,9 @@ router.get("/", async (req, res, next) => {
         },
       },
       attributes: ["id"],
-      order: [[Message, "createdAt", "ASC"]],
+      order: [[Message, "createdAt", "DESC"]],
       include: [
-        { model: Message, order: ["createdAt", "DESC"] },
+        { model: Message, order: [["createdAt", "ASC"]] },
         {
           model: User,
           as: "user1",
@@ -51,6 +51,7 @@ router.get("/", async (req, res, next) => {
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
       const convoJSON = convo.toJSON();
+      convoJSON.messages = convoJSON.messages.reverse();
 
       // set a property "otherUser" so that frontend will have easier access
       if (convoJSON.user1) {
@@ -73,22 +74,17 @@ router.get("/", async (req, res, next) => {
             foundMyEnd = true;
           }
         } else if (convoJSON.messages[i].senderId !== convoJSON.otherUser.id) {
-          console.log(convoJSON.messages[i].text)
           if (!convoJSON.messages[i].read && !foundTheirEnd) {
             theirReadIndex = i-1;
-            console.log(convoJSON.messages[i].read, foundTheirEnd, i)
           } else {
             foundTheirEnd = true;
-            console.log(convoJSON.messages[i].read, foundTheirEnd, i, ":(")
           }
         }
-
 
         if (foundMyEnd && foundTheirEnd) {
           break;
         }
       }
-      console.log("result", theirReadIndex)
       convoJSON.myUnreadCount = myUnreadCount;
       convoJSON.theirReadIndex = theirReadIndex;
 
