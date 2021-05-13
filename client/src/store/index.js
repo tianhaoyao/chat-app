@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, combineReducers } from "redux";
+import { createStore, applyMiddleware, combineReducers, compose } from "redux";
 import loggerMiddleware from "redux-logger";
 import thunkMiddleware from "redux-thunk";
 
@@ -17,7 +17,7 @@ export const clearOnLogout = () => {
 const appReducer = combineReducers({
   user,
   conversations,
-  activeConversation
+  activeConversation,
 });
 const rootReducer = (state, action) => {
   if (action.type === CLEAR_ON_LOGOUT) {
@@ -27,4 +27,9 @@ const rootReducer = (state, action) => {
   return appReducer(state, action);
 };
 
-export default createStore(rootReducer, applyMiddleware(thunkMiddleware, loggerMiddleware));
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(rootReducer, /* preloadedState, */ composeEnhancers(
+      applyMiddleware(thunkMiddleware, loggerMiddleware)
+    ));
+
+export default store

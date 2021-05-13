@@ -78,22 +78,42 @@ const sendMessage = (data, body) => {
     message: data.message,
     recipientId: body.recipientId,
     sender: data.sender,
+    read: data.read
   });
 };
 
-// message format to send: {recipientId, text, conversationId}
-// conversationId will be set to null if its a brand new conversation
-export const postMessage = (body) => (dispatch) => {
-  try {
-    const data = saveMessage(body);
+//data.message.id, body.sender, true
+const sendRead = (msgId, senderId, recipientId, read, conversationId) => {
+  let data = {
+    msgId: msgId,
+    senderId: senderId,
+    recipientId: recipientId,
+    read: read,
+    conversationId: conversationId
+  }
+  socket.emit("set-read", data);
+}
 
+// message format to send: {recipientId, text, conversationId, exists, read}
+// conversationId will be set to null if its a brand new conversation
+export const postMessage = (body) => async (dispatch) => {
+  try {
+    const data = await saveMessage(body);
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
     } else {
-      dispatch(setNewMessage(data.message));
+      dispatch(setNewMessage(data.message, body.sender, body.exists));
     }
-
     sendMessage(data, body);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const setReadMessage = (body) => async (dispatch) => {
+  try {
+    const data = (await axios.post("/api/read", body)).data;
+    sendRead(data.msgId, data.senderId, data.recipientId, data.read, data.conversationId);
   } catch (error) {
     console.error(error);
   }

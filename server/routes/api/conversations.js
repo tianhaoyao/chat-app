@@ -22,7 +22,7 @@ router.get("/", async (req, res, next) => {
       attributes: ["id"],
       order: [[Message, "createdAt", "DESC"]],
       include: [
-        { model: Message, order: ["createdAt", "DESC"] },
+        { model: Message, order: [["createdAt", "ASC"]] },
         {
           model: User,
           as: "user1",
@@ -51,6 +51,7 @@ router.get("/", async (req, res, next) => {
     for (let i = 0; i < conversations.length; i++) {
       const convo = conversations[i];
       const convoJSON = convo.toJSON();
+      convoJSON.messages = convoJSON.messages.reverse();
 
       // set a property "otherUser" so that frontend will have easier access
       if (convoJSON.user1) {
@@ -60,6 +61,32 @@ router.get("/", async (req, res, next) => {
         convoJSON.otherUser = convoJSON.user2;
         delete convoJSON.user2;
       }
+      let myUnreadCount = 0;
+      let theirReadIndex = 0;
+      let foundMyEnd = false;
+      let foundTheirEnd = false;
+
+      for (let i = convoJSON.messages.length - 1; i >= 0; i--) {
+        if (convoJSON.messages[i].senderId === convoJSON.otherUser.id) {
+          if (!convoJSON.messages[i].read) {
+            myUnreadCount++;
+          } else {
+            foundMyEnd = true;
+          }
+        } else if (convoJSON.messages[i].senderId !== convoJSON.otherUser.id) {
+          if (!convoJSON.messages[i].read && !foundTheirEnd) {
+            theirReadIndex = i-1;
+          } else {
+            foundTheirEnd = true;
+          }
+        }
+
+        if (foundMyEnd && foundTheirEnd) {
+          break;
+        }
+      }
+      convoJSON.myUnreadCount = myUnreadCount;
+      convoJSON.theirReadIndex = theirReadIndex;
 
       // set property for online status of the other user
       if (onlineUsers.includes(convoJSON.otherUser.id)) {
@@ -69,7 +96,8 @@ router.get("/", async (req, res, next) => {
       }
 
       // set properties for notification count and latest message preview
-      convoJSON.latestMessageText = convoJSON.messages[0].text;
+      convoJSON.latestMessageText =
+        convoJSON.messages[convoJSON.messages.length - 1].text;
       conversations[i] = convoJSON;
     }
 
