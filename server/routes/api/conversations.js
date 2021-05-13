@@ -63,7 +63,7 @@ router.get("/", async (req, res, next) => {
       let myUnreadCount = 0;
       let theirReadIndex = 0;
       let foundMyEnd = false;
-      let foundTheirEnd = true;
+      let foundTheirEnd = false;
 
       for (let i = convoJSON.messages.length - 1; i >= 0; i--) {
         if (convoJSON.messages[i].senderId === convoJSON.otherUser.id) {
@@ -73,17 +73,22 @@ router.get("/", async (req, res, next) => {
             foundMyEnd = true;
           }
         } else if (convoJSON.messages[i].senderId !== convoJSON.otherUser.id) {
-          if (convoJSON.messages[i].read) {
-            theirReadIndex = i;
+          console.log(convoJSON.messages[i].text)
+          if (!convoJSON.messages[i].read && !foundTheirEnd) {
+            theirReadIndex = i-1;
+            console.log(convoJSON.messages[i].read, foundTheirEnd, i)
           } else {
             foundTheirEnd = true;
+            console.log(convoJSON.messages[i].read, foundTheirEnd, i, ":(")
           }
         }
+
 
         if (foundMyEnd && foundTheirEnd) {
           break;
         }
       }
+      console.log("result", theirReadIndex)
       convoJSON.myUnreadCount = myUnreadCount;
       convoJSON.theirReadIndex = theirReadIndex;
 
